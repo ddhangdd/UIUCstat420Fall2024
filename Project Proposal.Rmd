@@ -12,6 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1. Group Members
 
+- Anshul Kaushik
+- Desmond Fung
+- Jon Green
+- Kangyi Jiang
+
 ## 2. Tentative Project Title
 
 ## 3. Dataset Description
