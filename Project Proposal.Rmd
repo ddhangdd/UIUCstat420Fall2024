@@ -5,8 +5,8 @@ date: "2024-11-16"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+options(scipen = 1, digits = 4, width = 80, fig.align = "center")
 ```
 
 
@@ -33,7 +33,12 @@ Due to confidentiality restrictions, specific details about the data's origins c
 
 ## 5. Statement of Interest
 
-A brief statement of the business, science, research, or personal interest you have in the data set which you hope to explore
+We’re exploring the **Diabetes Prediction Dataset** to better understand what factors influence **blood glucose levels**. 
+
+By focusing on key variables like `age`, `BMI`, `hypertension`, `heart_disease`, `smoking_history`, and `HbA1c_level`, we’ll use linear regression to analyze how these factors contribute to predicting blood glucose levels.
+
+Our goal is simple: uncover patterns that can help identify early warning signs for diabetes-related issues. This kind of insight could make a real difference in creating **personalized care strategies** and improving how we approach **diabetes prevention and management**.
+
 
 ## 6. Evidence of Data Loading in R
 
