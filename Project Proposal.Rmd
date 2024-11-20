@@ -21,7 +21,27 @@ options(scipen = 1, digits = 4, width = 80, fig.align = "center")
 
 ## 3. Dataset Description
 
-Description of the data file (what they contain including number of variables and number of records). You do not necessarily have to list all the variables, but at least mention those of greatest importance.
+We chose a dataset that includes patients' medical and demographic information, as well as their diabetes status (positive or negative). The dataset is huge, with 9 variables and 100,000 observations. The data includes variables such as age, gender, body mass index (BMI), hypertension, heart disease, smoking history, HbA1c level, and blood glucose level.
+
+The description of variables:
+
+1. gender: Gender refers to a person's biological sex, which may influence their vulnerability to diabetes.
+
+2. age: Age is an important factor as diabetes is more commonly diagnosed in older adults. Age ranges from 0-80 in the dataset.
+
+3. hypertension: Hypertension is a medical condition in which blood pressure in the arteries is consistently high. It has two possible values: 0 and 1, with 0 indicating that they do not have hypertension and 1 indicating that they have.
+
+4. heart_disease: Heart disease is another medical condition linked to an increased chance of acquiring diabetes. It has a value of either 0 or 1, with 0 denoting no heart disease and 1 indicating heart disease.
+
+5. smoking_history: Smoking history is also considered a risk factor for diabetes and can exacerbate the complications associated with diabetes. There are 5 categories in the dataset i.e not current,former,No Info,current,never and ever.
+
+6. bmi: BMI (Body Mass Index) is a calculation of body fat based on weight and height. Increased BMI values are associated with an increased risk of diabetes. The dataset includes BMI values ranging from 10.16 to 71.55. Underweight is defined as a BMI of less than 18.5, normal as 18.5-24.9, overweight as 25-29.9, and obese as 30 or higher.
+
+7. HbA1c_level: HbA1c (Hemoglobin A1c) is a measurement of a person's average blood sugar level over the previous 2-3 months. Higher levels imply an increased risk of getting diabetes. Diabetes is typically diagnosed when HbA1c levels exceed 6.5%.
+
+8. blood_glucose_level: Blood glucose level is the amount of glucose in the bloodstream at any particular time. High blood glucose levels are a key sign of diabetes.
+
+9. diabetes: Diabetes is a predicted variable in the dataset, with 1 indicating the occurrence of diabetes and 0 indicating its absence.
 
 ## 4. Background Information
 
