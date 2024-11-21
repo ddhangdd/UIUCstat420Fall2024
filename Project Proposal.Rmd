@@ -19,6 +19,8 @@ options(scipen = 1, digits = 4, width = 80, fig.align = "center")
 
 ## 2. Tentative Project Title
 
+### Influences of medical data on blood glucose level
+
 ## 3. Dataset Description
 
 We chose a dataset that includes patients' medical and demographic information, as well as their diabetes status (positive or negative). The dataset is huge, with 9 variables and 100,000 observations. The data includes variables such as age, gender, body mass index (BMI), hypertension, heart disease, smoking history, HbA1c level, and blood glucose level.

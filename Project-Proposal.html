@@ -368,6 +368,9 @@ display: none;
 </div>
 <div id="tentative-project-title" class="section level2">
 <h2>2. Tentative Project Title</h2>
+<div id="influences-of-medical-data-on-blood-glucose-level" class="section level3">
+<h3>Influences of medical data on blood glucose level</h3>
+</div>
 </div>
 <div id="dataset-description" class="section level2">
 <h2>3. Dataset Description</h2>
@@ -448,6 +451,13 @@ prevention and management</strong>.</p>
 </div>
 <div id="evidence-of-data-loading-in-r" class="section level2">
 <h2>6. Evidence of Data Loading in R</h2>
+<pre class="r"><code>file_path &lt;- &quot;diabetes_prediction_dataset.csv&quot;
+
+diabetes_data &lt;- read.csv(file_path)
+
+head(diabetes_data$blood_glucose_level)</code></pre>
+<pre><code>## [1] 140  80 158 155 155  85</code></pre>
+<p>This code should output: “[1] 140 80 158 155 155 85”.</p>
 </div>
 
 
