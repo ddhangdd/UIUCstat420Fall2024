@@ -63,7 +63,7 @@ Our goal is simple: uncover patterns that can help identify early warning signs 
 ## 6. Evidence of Data Loading in R
 
 ```{r}
-file_path <- "~/Downloads/diabetes_prediction_dataset.csv"
+file_path <- "diabetes_prediction_dataset.csv"
 
 diabetes_data <- read.csv(file_path)
 
