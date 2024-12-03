@@ -1,0 +1,85 @@
+---
+title: "Influences of medical data on blood glucose level"
+author: "Alliance of the Unshabby"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Provide an introduction that includes:
+
+- **Purpose of the Analysis**: Explain what you are attempting to accomplish.
+- **Background Information**:
+  - What is this data?
+  - Where did it come from?
+  - What are the variables?
+  - Why is it interesting to you?
+- **Objective of the Model**: Describe why you are creating a model for this data and the goal of the model.
+
+*Note: Provide enough background so that a reader would not need to load your data to understand your report. Assume the reader is familiar with the course concepts but not your data.*
+
+## Methods
+
+This section contains the bulk of your work and R code. Use RMarkdown and code comments to explain your code if needed.
+
+### Data Preparation
+
+```{r}
+file_path <- "diabetes_prediction_dataset.csv"
+
+diabetes_data <- read.csv(file_path)
+
+head(diabetes_data$blood_glucose_level)
+```
+
+- Describe any data preparation performed on the original data before modeling.
+- Include descriptions of all relevant variables.
+- Explain any transformations or cleaning steps.
+
+### Modeling Process
+
+- **Methodology**: Detail the methods you applied (e.g., multiple linear regression, dummy variables, interaction terms).
+- **Decision-Making Process**:
+  - Narrate your step-by-step decision-making as you adjusted the model.
+  - Discuss how you attempted to validate model assumptions.
+- **Diagnostics**:
+  - Include residual and outlier diagnostics.
+  - Discuss any transformations or model selections made.
+
+*Your task is to use appropriate methods to find a good model that can correctly answer a question about the dataset, and then communicate your result effectively.*
+
+## Results
+
+- Present numerical and graphical summaries of your results.
+- Report the final model you have chosen.
+- Provide evidence that your final choice of model is a good one.
+- Include relevant tables, charts, or figures, and discuss them in the text.
+
+## Discussion
+
+- Discuss your results in the context of the data.
+- Explain how your final model is useful.
+- Reflect on the implications of your findings.
+
+## Appendix
+
+Include supplementary materials that support your report but are not essential to the main text.
+
+- Additional code and analysis that would clutter the main report.
+- Extra figures or tables not included in the Results section.
+- Any other relevant information.
+
+*Do not simply dump code here; only include supplementary material.*
+
+### Group Members
+
+- Anshul Kaushik
+- Desmond Fung
+- Jon Green
+- Kangyi Jiang
+
