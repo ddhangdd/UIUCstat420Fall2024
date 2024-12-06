@@ -1,4 +1,4 @@
----
+ ---
 title: "Influences of medical data on blood glucose level"
 author: "Alliance of the Unshabby"
 date: "`r Sys.Date()`"
@@ -41,6 +41,36 @@ head(diabetes_data$blood_glucose_level)
 - Include descriptions of all relevant variables.
 - Explain any transformations or cleaning steps.
 
+```{r}
+# Remove the observations that gender == Other since there are only 18 observations of that, which is a extremely small amount.
+diabetes_data_prepared = subset(diabetes_data, gender != "Other")
+
+# Remove the No Info observations in smoking_history since we cannot get smoking_history information from these observations.
+diabetes_data_prepared = subset(diabetes_data_prepared, smoking_history != "No Info")
+
+# Remove the diabetes variable since it is a categorical variable indicating the presence of diabetes, which is mainly determined by our response variable: blood_glucose_level. Thus, we don't want to include the diabetes variable as a predict variable.
+diabetes_data_prepared = subset(diabetes_data_prepared, select = -diabetes)
+
+# Convert gender to a factor variable.
+diabetes_data_prepared$gender = as.factor(diabetes_data_prepared$gender)
+levels(diabetes_data_prepared$gender)
+
+# Convert hypertension to a factor variable.
+diabetes_data_prepared$hypertension = as.factor(diabetes_data_prepared$hypertension)
+levels(diabetes_data_prepared$hypertension)
+
+# Convert heart_disease to a factor variable
+diabetes_data_prepared$heart_disease = as.factor(diabetes_data_prepared$heart_disease)
+levels(diabetes_data_prepared$heart_disease)
+
+# Convert smoking_history to a factor variable
+diabetes_data_prepared$smoking_history = as.factor(diabetes_data_prepared$smoking_history)
+levels(diabetes_data_prepared$smoking_history)
+
+# Check the size of the prepared dataset
+length(diabetes_data_prepared$gender)
+```
+
 ### Modeling Process
 
 - **Methodology**: Detail the methods you applied (e.g., multiple linear regression, dummy variables, interaction terms).
@@ -52,6 +82,71 @@ head(diabetes_data$blood_glucose_level)
   - Discuss any transformations or model selections made.
 
 *Your task is to use appropriate methods to find a good model that can correctly answer a question about the dataset, and then communicate your result effectively.*
+
+We want to find a good model that can accurately predict the blood_glucose_level by knowing other medical data of a patient.
+
+```{r}
+# Construct an initial model. We choose a additive model of all the possible predictors by multiple linear regression.
+initial_model = lm(blood_glucose_level ~ ., data = diabetes_data_prepared)
+
+# Check colinearity
+faraway::vif(initial_model)
+
+# Check R^2
+summary(initial_model)$r.squared
+```
+From the output, we can see that the variance inflation factor of all the predictors are lower than 5, so we may not worry about collinearity.
+
+```{r warning=FALSE}
+# Then, we do a AIC backword search to select a model
+selected_model = step(initial_model, direction = "backward", trace = 0)
+# Check the selected model
+selected_model
+# Check collinearity
+faraway::vif(selected_model)
+```
+From the output of vif, we can see that we do not need to worry about collinearity for the selected model. Then, we want to check the model assumptions.
+
+```{r}
+# Construct a function for plotting
+assumptions_plots = function(model, pcol = "grey", lcol = "dodgerblue") {
+  par(mfrow = c(1, 2))
+    plot(fitted(model), resid(model), col = pcol, pch = 20,
+     xlab = "Fitted", ylab = "Residuals", main = "Fitted Versus Residuals Plot")
+    abline(h = 0, col = lcol, lwd = 2)
+    qqnorm(resid(model), main = "Normal Q-Q Plot", col = pcol)
+    qqline(resid(model), col = lcol, lwd = 2)
+}
+```
+
+
+```{r warning=FALSE}
+library(lmtest)
+# Plot the Fitted vs Residual plot and Normal Q-Q plot
+assumptions_plots(selected_model)
+bptest(selected_model)
+```
+
+From Fitted Versus Residual Plot, we can clearly see that the mean of the residuals is not roughly 0 and the spread of the residuals varies a lot, which emphasizes that the linearity and constant variance assumption is not valid. From the Normal Q-Q Plot, we can clearly see that the points of the plot do not closely follow a straight line, which suggests that the data do not come for a normal distribution. Therefore, we need to do some transformations.
+
+```{r}
+calc_loocv_rmse = function(model) {
+  sqrt(mean((resid(model) / (1 - hatvalues(model))) ^ 2))
+}
+```
+
+
+```{r}
+library(MASS)
+# Do a log transformation on the response variable
+trans_model = lm(log(blood_glucose_level) ~ gender + log(age) + hypertension + 
+    heart_disease + bmi + HbA1c_level, data = diabetes_data_prepared)
+assumptions_plots(trans_model)
+bptest(trans_model)
+calc_loocv_rmse(initial_model)
+calc_loocv_rmse(trans_model)
+```
+
 
 ## Results
 
