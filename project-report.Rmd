@@ -30,11 +30,11 @@ This section contains the bulk of your work and R code. Use RMarkdown and code c
 ### Data Preparation
 
 ```{r}
-file_path <- "diabetes_prediction_dataset.csv"
+file_path <- "StudentPerformanceFactors.csv"
 
-diabetes_data <- read.csv(file_path)
+students_data <- read.csv(file_path)
 
-head(diabetes_data$blood_glucose_level)
+head(students_data$Exam_Score)
 ```
 
 - Describe any data preparation performed on the original data before modeling.
@@ -42,33 +42,66 @@ head(diabetes_data$blood_glucose_level)
 - Explain any transformations or cleaning steps.
 
 ```{r}
-# Remove the observations that gender == Other since there are only 18 observations of that, which is a extremely small amount.
-diabetes_data_prepared = subset(diabetes_data, gender != "Other")
+# Remove empty observations
+students_data = subset(students_data, students_data$Teacher_Quality != "")
+students_data = subset(students_data, students_data$Parental_Education_Level != "")
+students_data = subset(students_data, students_data$Distance_from_Home != "")
+students_data = na.omit(students_data)
 
-# Remove the No Info observations in smoking_history since we cannot get smoking_history information from these observations.
-diabetes_data_prepared = subset(diabetes_data_prepared, smoking_history != "No Info")
+# Change Parental_Involvement to a factor variable
+students_data$Parental_Involvement = as.factor(students_data$Parental_Involvement)
+levels(students_data$Parental_Involvement)
 
-# Remove the diabetes variable since it is a categorical variable indicating the presence of diabetes, which is mainly determined by our response variable: blood_glucose_level. Thus, we don't want to include the diabetes variable as a predict variable.
-diabetes_data_prepared = subset(diabetes_data_prepared, select = -diabetes)
+# Change Access_to_Resources to a factor variable
+students_data$Access_to_Resources = as.factor(students_data$Access_to_Resources)
+levels(students_data$Access_to_Resources)
 
-# Convert gender to a factor variable.
-diabetes_data_prepared$gender = as.factor(diabetes_data_prepared$gender)
-levels(diabetes_data_prepared$gender)
+# Change Extracurricular_Activities to a factor variable
+students_data$Extracurricular_Activities = as.factor(students_data$Extracurricular_Activities)
+levels(students_data$Extracurricular_Activities)
 
-# Convert hypertension to a factor variable.
-diabetes_data_prepared$hypertension = as.factor(diabetes_data_prepared$hypertension)
-levels(diabetes_data_prepared$hypertension)
+# Change Motivation_Level to a factor variable
+students_data$Motivation_Level = as.factor(students_data$Motivation_Level)
+levels(students_data$Motivation_Level)
 
-# Convert heart_disease to a factor variable
-diabetes_data_prepared$heart_disease = as.factor(diabetes_data_prepared$heart_disease)
-levels(diabetes_data_prepared$heart_disease)
+# Change Internet_Access to a factor variable
+students_data$Internet_Access = as.factor(students_data$Internet_Access)
+levels(students_data$Internet_Access)
 
-# Convert smoking_history to a factor variable
-diabetes_data_prepared$smoking_history = as.factor(diabetes_data_prepared$smoking_history)
-levels(diabetes_data_prepared$smoking_history)
+# Change Family_Income to a factor variable
+students_data$Family_Income = as.factor(students_data$Family_Income)
+levels(students_data$Family_Income)
+
+# Change Teacher_Quality to a factor variable
+students_data$Teacher_Quality = as.factor(students_data$Teacher_Quality)
+levels(students_data$Teacher_Quality)
+
+# Change School_Type to a factor variable
+students_data$School_Type = as.factor(students_data$School_Type)
+levels(students_data$School_Type)
+
+# Change Peer_Influence to a factor variable
+students_data$Peer_Influence = as.factor(students_data$Peer_Influence)
+levels(students_data$Peer_Influence)
+
+# Change Learning_Disabilities to a factor variable
+students_data$Learning_Disabilities = as.factor(students_data$Learning_Disabilities)
+levels(students_data$Learning_Disabilities)
+
+# Change Parental_Education_Level to a factor variable
+students_data$Parental_Education_Level = as.factor(students_data$Parental_Education_Level)
+levels(students_data$Parental_Education_Level)
+
+# Change Distance_from_Home to a factor variable
+students_data$Distance_from_Home = as.factor(students_data$Distance_from_Home)
+levels(students_data$Distance_from_Home)
+
+# Change Gender to a factor variable
+students_data$Gender = as.factor(students_data$Gender)
+levels(students_data$Gender)
 
 # Check the size of the prepared dataset
-length(diabetes_data_prepared$gender)
+length(students_data$Exam_Score)
 ```
 
 ### Modeling Process
@@ -83,13 +116,16 @@ length(diabetes_data_prepared$gender)
 
 *Your task is to use appropriate methods to find a good model that can correctly answer a question about the dataset, and then communicate your result effectively.*
 
-We want to find a good model that can accurately predict the blood_glucose_level by knowing other medical data of a patient.
+We will use 10 of the predictors in the dataset to build a model. By adjusting the initial model, we will try to get a good model that can accurately predict the student's `Exam_Score` from the data of `Hours_Studied`, `Attendance`, `Parental_Involvement`, `Extracurricular_Activities`, `Sleep_Hours`, `Previous_Scores`, `Tutoring_Sessions`, `Physical_Activity`, `Parental_Education_Level`, and `Gender`.
 
 ```{r}
-# Construct an initial model. We choose a additive model of all the possible predictors by multiple linear regression.
-initial_model = lm(blood_glucose_level ~ ., data = diabetes_data_prepared)
+# Construct an initial model. We choose a additive model of 10 predictors by multiple linear regression.
+initial_model = lm(Exam_Score ~ Hours_Studied + Attendance + Parental_Involvement + 
+                   Extracurricular_Activities + Sleep_Hours + Previous_Scores + 
+                   Tutoring_Sessions + Physical_Activity + Parental_Education_Level + Gender, 
+                   data = students_data)
 
-# Check colinearity
+# Check collinearity
 faraway::vif(initial_model)
 
 # Check R^2
@@ -98,12 +134,14 @@ summary(initial_model)$r.squared
 From the output, we can see that the variance inflation factor of all the predictors are lower than 5, so we may not worry about collinearity.
 
 ```{r warning=FALSE}
-# Then, we do a AIC backword search to select a model
+# Then, we do a AIC backward search to select a model
 selected_model = step(initial_model, direction = "backward", trace = 0)
+
 # Check the selected model
 selected_model
+
 # Check collinearity
-faraway::vif(selected_model)
+faraway::vif(initial_model)
 ```
 From the output of vif, we can see that we do not need to worry about collinearity for the selected model. Then, we want to check the model assumptions.
 
@@ -119,34 +157,61 @@ assumptions_plots = function(model, pcol = "grey", lcol = "dodgerblue") {
 }
 ```
 
-
-```{r warning=FALSE}
-library(lmtest)
-# Plot the Fitted vs Residual plot and Normal Q-Q plot
-assumptions_plots(selected_model)
-bptest(selected_model)
-```
-
-From Fitted Versus Residual Plot, we can clearly see that the mean of the residuals is not roughly 0 and the spread of the residuals varies a lot, which emphasizes that the linearity and constant variance assumption is not valid. From the Normal Q-Q Plot, we can clearly see that the points of the plot do not closely follow a straight line, which suggests that the data do not come for a normal distribution. Therefore, we need to do some transformations.
-
 ```{r}
+# Construct a function for calculating the LOOCV RMSE
 calc_loocv_rmse = function(model) {
   sqrt(mean((resid(model) / (1 - hatvalues(model))) ^ 2))
 }
 ```
 
+```{r message=FALSE, warning=FALSE}
+library(lmtest)
+# Plot the Fitted vs Residual plot and Normal Q-Q plot
+assumptions_plots(selected_model)
 
-```{r}
-library(MASS)
-# Do a log transformation on the response variable
-trans_model = lm(log(blood_glucose_level) ~ gender + log(age) + hypertension + 
-    heart_disease + bmi + HbA1c_level, data = diabetes_data_prepared)
-assumptions_plots(trans_model)
-bptest(trans_model)
-calc_loocv_rmse(initial_model)
-calc_loocv_rmse(trans_model)
+# Do a Breusch-Pagan Test
+bptest(selected_model)
 ```
 
+For both of the plots, we can clearly see that there are some outliers in this model, which maay be influential. Thus, we may need to do some adjustments for the selected model.From the Fitted Versus Residual Plot and the Breusch-Pagan Test, we can see that the mean of the residuals is roughly 0 and the spread of the residuals is roughly the same at most fitted values and the p-value for the Breusch-Pagan Test is really large, which means the linearity and constant variance assumptions are valid. However, from the Normal Q-Q plot, we can see that the points do not do not closely follow a straight line, which suggest that the normal distribution assumption is not valid.
+
+```{r}
+# Calculate the cooks distance of the selected model
+cd_selected_model = cooks.distance(selected_model)
+
+# Build a fixed model that excludes all the influential data (cooks distance > 4/n)
+fix_model = lm(Exam_Score ~ Hours_Studied + Attendance + Parental_Involvement + 
+    Extracurricular_Activities + Previous_Scores + Tutoring_Sessions + 
+    Physical_Activity + Parental_Education_Level, 
+    data = students_data, 
+    subset = cd_selected_model <= 4 / length(cd_selected_model))
+    
+# Plot the Fitted vs Residual plot and Normal Q-Q plot
+assumptions_plots(fix_model)
+```
+
+```{r message=FALSE, warning=FALSE}
+# Do a Breusch-Pagan Test
+bptest(fix_model)
+```
+The Normal Q-Q plot is much better and clearly shows that the majority of the points closely follow a straight line, indicating that the normal distribution assumption is correct. The Fitted Versus Residual Plot may look like that mean of the residuals is approximately 0 and the spread of the residuals is roughly the same at most fitted values. However, the Breusch-Pagan test gives a pretty low p-value: `r bptest(fix_model)$p.value`, which implies that the constant variance assumption is not valid for the model after adjustments. Therefore, we need to do some transformations.
+
+```{r}
+# Do some Predictor transformations
+trans_model = lm(Exam_Score ~ Hours_Studied + I(Hours_Studied ^ 2) + log(Attendance) + Parental_Involvement + 
+    Extracurricular_Activities + log(Previous_Scores) + sqrt(Tutoring_Sessions) + 
+    Physical_Activity + I(Physical_Activity ^ 2) + Parental_Education_Level, 
+    data = students_data, 
+    subset = cd_selected_model <= 4 / length(cd_selected_model))
+
+# Do a Breusch-Pagan Test
+bptest(trans_model)
+
+# Plot the Fitted vs Residual plot and Normal Q-Q plot
+assumptions_plots(trans_model)
+```
+
+After the transformation, we can find that the p-value of the Breusch-Pagan test is `r bptest(trans_model)$p.value`, which means that the test will fail to reject for a low $\alpha$, which indicate that the constant variance assumption is valid. Moreover, from the Fitted Versus Residual Plot, we can see that the mean of the residuals is approximately 0 and the spread of the residuals is roughly the same at most fitted values, which also indicate that the linearity and constant variance assumption is valid. Moreover, the Normal Q-Q plot looks really good as the majority of the points closely follow a straight line, indicating that the normal distribution assumption is correct. Therefore, we can choose this transformed model as a result model.
 
 ## Results
 
