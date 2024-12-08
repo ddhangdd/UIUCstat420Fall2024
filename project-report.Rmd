@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
  ---
 title: "Influences of medical data on blood glucose level"
 author: "Alliance of the Unshabby"
@@ -7,6 +12,11 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE}
+# Utility Functions used in this Report
+format_decimal = function(x, k) trimws(format(round(x, k), nsmall=k))
 ```
 
 ## Introduction
@@ -173,18 +183,23 @@ assumptions_plots(selected_model)
 bptest(selected_model)
 ```
 
-For both of the plots, we can clearly see that there are some outliers in this model, which maay be influential. Thus, we may need to do some adjustments for the selected model.From the Fitted Versus Residual Plot and the Breusch-Pagan Test, we can see that the mean of the residuals is roughly 0 and the spread of the residuals is roughly the same at most fitted values and the p-value for the Breusch-Pagan Test is really large, which means the linearity and constant variance assumptions are valid. However, from the Normal Q-Q plot, we can see that the points do not do not closely follow a straight line, which suggest that the normal distribution assumption is not valid.
+For both of the plots, we can clearly see that there are some outliers in this model, which might be influential. Thus, we may need to do some adjustments for the selected model. From the Fitted Versus Residual Plot and the Breusch-Pagan Test, we can see that the mean of the residuals is roughly 0 and the spread of the residuals is roughly the same at most fitted values and the p-value for the Breusch-Pagan Test is really large, which means the linearity and constant variance assumptions are valid. However, from the Normal Q-Q plot, we can see that the points do not do not closely follow a straight line, which suggests that the normal distribution assumption is not valid.
 
 ```{r}
 # Calculate the cooks distance of the selected model
 cd_selected_model = cooks.distance(selected_model)
 
+# Identify influential rows with Cook's Distance > 4/n
+influential_indices = which(cd_selected_model > 4 / length(cd_selected_model))
+
+# Remove those rows from the original dataset
+students_data_cleaned = students_data[-influential_indices, ]
+
 # Build a fixed model that excludes all the influential data (cooks distance > 4/n)
 fix_model = lm(Exam_Score ~ Hours_Studied + Attendance + Parental_Involvement + 
     Extracurricular_Activities + Previous_Scores + Tutoring_Sessions + 
     Physical_Activity + Parental_Education_Level, 
-    data = students_data, 
-    subset = cd_selected_model <= 4 / length(cd_selected_model))
+    data = students_data_cleaned)
     
 # Plot the Fitted vs Residual plot and Normal Q-Q plot
 assumptions_plots(fix_model)
@@ -201,8 +216,7 @@ The Normal Q-Q plot is much better and clearly shows that the majority of the po
 trans_model = lm(Exam_Score ~ Hours_Studied + I(Hours_Studied ^ 2) + log(Attendance) + Parental_Involvement + 
     Extracurricular_Activities + log(Previous_Scores) + sqrt(Tutoring_Sessions) + 
     Physical_Activity + I(Physical_Activity ^ 2) + Parental_Education_Level, 
-    data = students_data, 
-    subset = cd_selected_model <= 4 / length(cd_selected_model))
+    data = students_data_cleaned)
 
 # Do a Breusch-Pagan Test
 bptest(trans_model)
@@ -211,7 +225,33 @@ bptest(trans_model)
 assumptions_plots(trans_model)
 ```
 
-After the transformation, we can find that the p-value of the Breusch-Pagan test is `r bptest(trans_model)$p.value`, which means that the test will fail to reject for a low $\alpha$, which indicate that the constant variance assumption is valid. Moreover, from the Fitted Versus Residual Plot, we can see that the mean of the residuals is approximately 0 and the spread of the residuals is roughly the same at most fitted values, which also indicate that the linearity and constant variance assumption is valid. Moreover, the Normal Q-Q plot looks really good as the majority of the points closely follow a straight line, indicating that the normal distribution assumption is correct. Therefore, we can choose this transformed model as a result model.
+After the transformation, we find that the p-value of the Breusch-Pagan test is `r format_decimal(bptest(trans_model)$p.value, 4)`, which means that the test rejects the null hypothesis of constant variance for a low $\alpha$ ($p \le 0.05$), indicating that the constant variance assumption is not valid. However, from the Fitted Versus Residual Plot, we can see that the mean of the residuals is approximately 0 and the spread of the residuals is roughly the same at most fitted values, which indicates that we are close to meeting the assumption of constant variance. Moreover, the Normal Q-Q plot looks really good as the majority of the points closely follow a straight line, indicating that the normal distribution assumption is almost correct. Therefore, while this transformed model shows promising results and we are on the right track, further transformations, such as using Box-Cox, will be performed to address the remaining issues.
+
+
+```{r}
+library(MASS)
+boxcox(trans_model, lambda = seq(0.2, 0.9, 0.01))
+```
+
+The **Box-Cox plot** demonstrates that a response transformation could significantly enhance the model's fit. The estimated value of $\lambda$ is approximately **0.6**, which falls within the 95% confidence interval of $0.3$ to $0.8$. After evaluating several values within this interval, $\lambda = 0.6$ was selected because it yielded the largest Breusch-Pagan test p-value, indicating the best stabilization of variance. This transformation is expected to address heteroscedasticity and improve adherence to the model's assumptions.
+
+
+```{r}
+# Add Box-Cox transformation to Response
+trans_model_cox = lm(
+  (((Exam_Score ^ 0.6) - 1) / 0.6) ~ Hours_Studied + I(Hours_Studied ^ 2) + log(Attendance) + Parental_Involvement + Extracurricular_Activities + log(Previous_Scores) + sqrt(Tutoring_Sessions) + Physical_Activity + I(Physical_Activity ^ 2) + Parental_Education_Level,
+  data = students_data_cleaned
+)
+
+# Do a Breusch-Pagan Test
+bptest(trans_model_cox)
+
+# Plot the Fitted vs Residual plot and Normal Q-Q plot
+assumptions_plots(trans_model_cox)
+```
+
+After applying the Box-Cox transformation with $\lambda = 0.6$, the Breusch-Pagan test yielded a p-value of `r format_decimal(bptest(trans_model_cox)$p.value, 4)`, indicating that the test fails to reject the null hypothesis of constant variance. This confirms that the constant variance assumption is now valid. The **Fitted Versus Residual Plot** shows that the residuals have a mean approximately equal to 0, with a consistent spread across the fitted values, supporting the linearity and constant variance assumptions. Additionally, the **Normal Q-Q plot** demonstrates that the residuals closely follow the diagonal line, confirming that the normality assumption is satisfied. These results validate the final model with the Box-Cox transformation, making it suitable for interpretation and inference.
+
 
 ## Results
 
@@ -219,6 +259,92 @@ After the transformation, we can find that the p-value of the Breusch-Pagan test
 - Report the final model you have chosen.
 - Provide evidence that your final choice of model is a good one.
 - Include relevant tables, charts, or figures, and discuss them in the text.
+
+### Final Model
+
+The final model selected for predicting exam scores incorporates key predictors, including transformed terms for Hours_Studied, Attendance, Previous_Scores, and Physical_Activity, as well as categorical variables like Parental_Involvement and Parental_Education_Level. The model equation is as follows:
+$$
+\begin{aligned}
+\frac{\text{Exam_Score}^{0.6} - 1}{0.6} = & \ \beta_0 + \beta_1 \cdot \text{Hours_Studied} + \beta_2 \cdot \text{Hours_Studied}^2 + \beta_3 \cdot \log(\text{Attendance}) \\
+& + \beta_4 \cdot \text{Parental_Involvement}_{\text{Low}} + \beta_5 \cdot \text{Parental_Involvement}_{\text{Medium}} + \beta_6 \cdot \text{Extracurricular_Activities} \\
+& + \beta_7 \cdot \log(\text{Previous_Scores}) + \beta_8 \cdot \sqrt{\text{Tutoring_Sessions}} + \beta_9 \cdot \text{Physical_Activity} \\
+& + \beta_{10} \cdot \text{Physical_Activity}^2 + \beta_{11} \cdot \text{Parental_Education_Level}_{\text{High_School}} \\
+& + \beta_{12} \cdot \text{Parental_Education_Level}_{\text{Postgraduate}} + \epsilon
+\end{aligned}
+$$
+
+### Model Performance
+
+```{r}
+# LOOCV RMSE
+loocv_rmse = calc_loocv_rmse(trans_model_cox)
+
+# Extract adjusted R^2 from model summary
+adjusted_r2 = summary(trans_model_cox)$adj.r.squared
+
+# RMSE
+rmse = sqrt(mean(resid(trans_model_cox)^2))
+```
+
+The final model demonstrates strong predictive capability with an adjusted $R^2$ of `r format_decimal(adjusted_r2, 4)`, indicating that it explains the majority of the variability in the exam scores. Additionally, the Root Mean Squared Error (RMSE) of the model is `r format_decimal(rmse, 4)`, and the Leave-One-Out Cross-Validation RMSE (LOOCV RMSE) is `r format_decimal(loocv_rmse, 4)`. The similarity between the RMSE and LOOCV RMSE values confirms that the model generalizes well to unseen data, making it suitable for prediction tasks.
+
+### Predicted vs Actual Plot
+
+```{r}
+# Generate predicted values
+predicted_values = predict(trans_model_cox)
+
+# Reverse the Box-Cox transformation
+original_scale_predictions = (predicted_values * 0.6 + 1)^(1 / 0.6)
+
+# Create the plot
+plot(students_data_cleaned$Exam_Score, original_scale_predictions,
+     xlab = "Actual Exam Scores",
+     ylab = "Predicted Exam Scores",
+     main = "Predicted vs Actual Exam Scores",
+     pch = 16, col = "blue")
+abline(0, 1, col = "red", lwd = 2)
+```
+
+The points in the **Predicted vs Actual Exam Scores** plot generally cluster along the red 45-degree line, indicating a strong agreement between the model's predictions and the actual exam scores. This suggests that the model captures the underlying relationship in the data effectively.
+
+### Residuals vs Fitted plot
+
+```{r}
+# Residual plot
+plot(fitted(trans_model_cox), resid(trans_model_cox),
+     xlab = "Fitted Values",
+     ylab = "Residuals",
+     main = "Residuals vs Fitted",
+     pch = 16, col = "blue")
+abline(h = 0, col = "red", lwd = 2) # Add a horizontal line at 0
+```
+
+The **Residuals vs Fitted plot** indicates that the residuals are evenly distributed around zero, with no discernible patterns or systematic bias. This suggests that the model assumptions of linearity and independence are valid. While there is a slight decrease in variance at the extremes, this is likely due to the smaller number of data points at very low and very high exam scores, which are less common in the dataset. Overall, the model demonstrates good reliability across the range of predicted values.
+
+### Breusch-Pagan Test
+
+```{r}
+# Perform the Breusch-Pagan test
+library(lmtest)
+bp_test = bptest(trans_model_cox)
+```
+
+The **Breusch-Pagan Test** was conducted to statistically assess heteroscedasticity. The test yielded a p-value of `r format_decimal(bp_test$p.value, 5)`, which suggests that the residuals do exhibit constant variance. This aligns with the visual inspection of the residuals vs. fitted plot, further validating the reliability of the model.
+
+### Q-Q Plot
+
+```{r}
+# Generate Q-Q plot for the residuals
+qqnorm(resid(trans_model_cox), main = "Normal Q-Q Plot")
+qqline(resid(trans_model_cox), col = "red", lwd = 2)
+```
+
+The **Q-Q plot** shows that most residuals closely follow the diagonal line, indicating that the residuals are approximately normally distributed. However, minor deviations at the extremes suggest some potential issues with extreme observations. These deviations are not severe and likely do not significantly impact the overall conclusions drawn from the model.
+
+### Outliers
+
+To address potential issues with influential data points, rows with Cook's Distance greater than $\frac{4}{n}$ were identified and removed. A total of `r length(influential_indices)` data points were excluded, representing approximately `r round((length(influential_indices) / nrow(students_data)) * 100, 2)`% of the dataset. This adjustment was relatively small, as it affected only a minor portion of the overall data. By removing these points, we improved the model's robustness without significantly altering the dataset's structure or underlying patterns.
 
 ## Discussion
 
