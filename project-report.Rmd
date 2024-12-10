@@ -348,9 +348,55 @@ To address potential issues with influential data points, rows with Cook's Dista
 
 ## Discussion
 
-- Discuss your results in the context of the data.
-- Explain how your final model is useful.
-- Reflect on the implications of your findings.
+
+#### **1. Results in the Context of the Data**
+- **Key Predictors Identified**:
+  - Hours studied, attendance, and parental involvement were identified as key predictors through a systematic analysis process:
+    - We started with a multiple linear regression model that included all potential predictors from the dataset.
+    - Using statistical techniques like backward elimination (based on AIC), we narrowed the model to the most impactful predictors that significantly contributed to explaining the variability in exam scores.
+    - `Hours_Studied` emerged as a key predictor because it showed a strong and statistically significant linear relationship with exam scores (\( p < `r summary(trans_model_cox)$coefficients["Hours_Studied", "Pr(>|t|)"]` \)). Testing for quadratic effects (e.g., \( \text{Hours_Studied}^2 \)) confirmed that the relationship was sufficiently captured in its linear form.
+    - `Attendance` was identified as a strong predictor after applying a logarithmic transformation to address diminishing returns at higher attendance levels. Its statistical significance (\( p = `r summary(trans_model_cox)$coefficients["log(Attendance)", "Pr(>|t|)"]` \)) highlighted its consistent impact.
+    - `Parental_Involvement` was found to have a significant categorical impact, with "low" and "medium" involvement levels leading to much lower scores compared to "high" involvement.
+
+- **Influence of Categorical Variables**:
+  - Variables like `Parental Education Level` and `Extracurricular Activities` also significantly impacted performance.
+  - Students with parents holding postgraduate degrees scored, on average, $`r format_decimal(summary(trans_model_cox)$coefficients["Parental_Education_LevelPostgraduate", "Estimate"], 4)`$ higher on the transformed exam score compared to those whose parents had only a high school education. This value was dynamically extracted from the regression model's coefficient for `Parental_Education_LevelPostgraduate`, representing the estimated effect of having parents with postgraduate education relative to the reference group.
+  - Participation in extracurricular activities positively influenced scores (\(p = `r summary(trans_model_cox)$coefficients["Extracurricular_ActivitiesYes", "Pr(>|t|)"]`\)), likely due to improved time management and social engagement skills.
+
+
+-   **Statistical Refinements**:
+    -   Our initial models faced challenges with residual normality and variance homogeneity. For example, the Breusch-Pagan test indicated heteroscedasticity.
+    -   Box-Cox transformation ($\lambda = 0.6$) successfully addressed these issues, resulting in a final model that adheres to statistical assumptions and offers reliable predictions.
+
+
+#### **2. Transforming Data into Action**
+
+-   **Predictive Accuracy**:
+    -   With an adjusted $R^2$ of $`r format_decimal(adjusted_r2, 4)`$, the model explains a substantial portion of the variability in exam scores, confirming its robustness.
+    -   The RMSE of $r$ and LOOCV RMSE show alignment, indicating the model's capacity to generalize to new data.
+-   **Actionable Insights**:
+    -   **Teachers and Administrators**:
+        -   Policies to improve attendance, such as incentives for perfect attendance or flexible scheduling for at-risk students, could significantly improve outcomes.
+        -   Promoting parental engagement through workshops or regular communication with parents can address the stark performance gap associated with low parental involvement (\( `r format_decimal(summary(trans_model_cox)$coefficients["Parental_InvolvementLow", "Estimate"], 4)` \) compared to high involvement).
+    -   **Students**:
+        -   Reinforcing consistent study schedules and encouraging participation in structured extracurricular activities can lead to tangible improvements in performance.
+-   In practice, our model could serve as the backbone for an educational dashboard, offering real-time insights to educators and administrators. Such a system could flag students with low attendance or insufficient study hours for early intervention while providing tailored recommendations, like increasing study hours or engaging in extracurricular activities, to enhance their academic outcomes.
+
+#### **3. Reflecting on the Implications of Our Findings**
+
+-   **Educational Equity**:
+    -   The stark differences in performance based on parental education levels and access to resources underscore the need to address **socioeconomic disparities**.
+    -   Scholarships, free tutoring programs, or community mentoring initiatives could help students from lower-income families compete on equal footing.
+-   **Policy Design**:
+    -   Focusing on teacher quality is crucial, as it indirectly impacts **student motivation** and **attendance**, which are key performance predictors.
+    -   Schools should invest in resource availability, such as digital tools or extracurricular support, to enhance learning opportunities.
+-   **Future Research**:
+    -   Exploring interactions between predictors like peer influence and school type could deepen understanding.
+    -   For instance, investigating how peer dynamics vary between public and private schools may reveal actionable insights about optimal learning environments.
+-   **Limitations to Acknowledge**:
+    -   The dataset predominantly focuses on quantifiable factors like hours studied, attendance, and test scores. While valuable, these only capture part of the story.
+    -   Adding qualitative measures such as student feedback or emotional well-being assessments could enrich the model.
+    -   The removal of outliers based on Cook’s Distance may have slightly limited the dataset’s representativeness, though it improved statistical validity.
 
 ## Appendix
 
