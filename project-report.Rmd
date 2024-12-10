@@ -363,7 +363,7 @@ To address potential issues with influential data points, rows with Cook's Dista
     - Participation in extracurricular activities positively influenced scores (\(p = `r summary(trans_model_cox)$coefficients["Extracurricular_ActivitiesYes", "Pr(>|t|)"]`\)), likely due to improved time management and social engagement skills.
 
 - **Statistical Refinements**:
-    - Initial models faced challenges with residual normality and variance homogeneity. For example, the Breusch-Pagan test indicated heteroscedasticity.
+    - Our initial model faced challenges with residual normality and variance homogeneity. For example, the Breusch-Pagan test indicated heteroscedasticity.
     - A Box-Cox transformation ($\lambda = 0.6$) successfully addressed these issues, resulting in a final model that adheres to statistical assumptions and provides reliable predictions.
 
 ---
