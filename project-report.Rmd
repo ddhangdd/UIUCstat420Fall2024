@@ -4,7 +4,7 @@ output:
   pdf_document: default
 ---
  ---
-title: "Influences of medical data on blood glucose level"
+title: "Influences of student data on final exam scores"
 author: "Alliance of the Unshabby"
 date: "`r Sys.Date()`"
 output: html_document
@@ -32,6 +32,24 @@ Provide an introduction that includes:
 - **Objective of the Model**: Describe why you are creating a model for this data and the goal of the model.
 
 *Note: Provide enough background so that a reader would not need to load your data to understand your report. Assume the reader is familiar with the course concepts but not your data.*
+
+Our main purpose with this dataset is to be able to predict student performance via exam scores from the values of the other variables in the dataset. We want to be able to see what key factors in a student's life, both at school and at home, can be correlated to higher or lower exam scores. We have some theories as to what specific factors we think will have a certain effect on scores, and we want to test those by creating models and generating plots and summaries that can showcase whether we should accept or reject the null hypothesis.
+
+This data showcases a statistical summary of students's performance and activities done in school as well as outside factors. It looks at factors like their attendance, sleep, level of parental guidance, distance from school to home, motivation, and many more. Some factors are objective, such as distance to school and attendance, whereas other factors, such as teacher evaluation and motivation, are more subjective. Thus this dataset does have some natural bias built into it. 
+
+As mentioned on the dataset Kaggle page: "The "Student Performance Factors" dataset is a synthetic dataset generated for educational and analytical purposes. The data is not sourced from any real-world institutions but is created to simulate realistic scenarios for analyzing student performance factors". Simply, this dataset is made for analysis and simulation. We will assume the data shown is very plausible to happen in real life so that our observations and tests are as authentic as possible.
+
+List of variables: `Exam_Score` from the data of `Hours_Studied`, `Attendance`, `Parental_Involvement`, `Access_to_Resources`, `Extracurricular_Activities`, `Sleep_Hours`, `Previous_Scores`, `Motivation_Level`, `Internet_Access`, `Tutoring_Sessions`, `Family_Income`, `Teacher_Quality`, `School_Type`, `Peer_Influence`, `Physical_Activity`, `Learning_Disabilities`, `Parental_Education_Level`, `Distance_from_Home`, `Gender`, and finally `Exam_Score`.
+
+The variables are the factors of interest that may be affecting exam scores. These range from actions done during school, like tutoring sessions, teacher quality, and previous scores, to factors involving the students home lives, like parental guidance and access to the internet and other resources. They help us gauge a student's current academic situation and their mood in regards to schoolwork and how factors outside of the classroom are impacting them.
+
+We felt this dataset was interesting to study because, as it is around finals time right now, the results could be notable to compare to our own lives and study habits. As a student, we have subjective reasoning for how we study or do classes in ways that we think will help us perform better on final exams. It also is interesting as the dataset includes a lot of factors regarding a student's own mental mood, which usually gets overlooked in discussions about what could be affecting exam scores.
+
+In order to figure out what variables or combinations of variables have significant correlation with exam scores, we will use a variety of different methods and models to avoid as much bias as possible. We will first set each variable to a factor variable, start with an initial model using ten of the variables, and then see the R^2 values and decide what further paths would be best.
+
+We will use tests like Breusch-Pagan. We will also fit plots, such as fitted vs residual and Q-Q, in order to accept or reject null hypothesis predictions of certain models we believe will have a high impact on final exam scores. The purpose of creating a model is that we don't want to just look at one variable and say that is why a student is doing well or not on exams. A student's life is so complex, and the beauty of this dataset is that it covers so many different factors of the student's experience. Thus we want to make a complex model involving multiple variables to not only better reflect all of the factors but also so that we can test multiple hypotheses.
+
+We will also make sure any model we use is actually suitable for making assumptions based on its results. We will use RMSE and LOOCV RMSE tests to ensure the model isn't just suitable for its given data and can take on more data and provide accurate results. Testing for outliers is also crucial, as although it is not inherently bad that they exist in a dataset, we need to be aware of them and do further analysis accordingly.
 
 ## Methods
 
@@ -286,7 +304,7 @@ adjusted_r2 = summary(trans_model_cox)$adj.r.squared
 rmse = sqrt(mean(resid(trans_model_cox)^2))
 ```
 
-The final model demonstrates strong predictive capability with an adjusted $R^2$ of `r format_decimal(adjusted_r2, 4)`, indicating that it explains the majority of the variability in the exam scores. Additionally, the Root Mean Squared Error (RMSE) of the model is `r format_decimal(rmse, 4)`, and the Leave-One-Out Cross-Validation RMSE (LOOCV RMSE) is `r format_decimal(loocv_rmse, 4)`. The similarity between the RMSE and LOOCV RMSE values confirms that the model generalizes well to unseen data, making it suitable for prediction tasks.
+The final model demonstrates strong predictive capability with an adjusted $R^2$ of `r format_decimal(adjusted_r2, 4)`, indicating that it explains the majority of the variability in the exam scores. Additionally, the Root Mean Squared Error (RMSE) of the model is `r format_decimal(rmse, 4)`, and the Leave-One-Out Cross-Validation RMSE (LOOCV RMSE) is `r format_decimal(loocv_rmse, 4)`. The similarity between the RMSE and LOOCV RMSE models confirms that the model generalizes well to unseen data, making it suitable for prediction tasks.
 
 ### Predicted vs Actual Plot
 
