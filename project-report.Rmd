@@ -3,13 +3,12 @@ output:
   html_document: default
   pdf_document: default
 ---
-
-|                                                           |
-|-----------------------------------------------------------|
-| itle: "Influences of medical data on blood glucose level" |
-| uthor: "Alliance of the Unshabby"                         |
-| ate: "`r Sys.Date()`"                                     |
-| utput: html_document                                      |
+ ---
+title: "Influences of medical data on blood glucose level"
+author: "Alliance of the Unshabby"
+date: "`r Sys.Date()`"
+output: html_document
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -24,13 +23,13 @@ format_decimal = function(x, k) trimws(format(round(x, k), nsmall=k))
 
 Provide an introduction that includes:
 
--   **Purpose of the Analysis**: Explain what you are attempting to accomplish.
--   **Background Information**:
-    -   What is this data?
-    -   Where did it come from?
-    -   What are the variables?
-    -   Why is it interesting to you?
--   **Objective of the Model**: Describe why you are creating a model for this data and the goal of the model.
+- **Purpose of the Analysis**: Explain what you are attempting to accomplish.
+- **Background Information**:
+  - What is this data?
+  - Where did it come from?
+  - What are the variables?
+  - Why is it interesting to you?
+- **Objective of the Model**: Describe why you are creating a model for this data and the goal of the model.
 
 *Note: Provide enough background so that a reader would not need to load your data to understand your report. Assume the reader is familiar with the course concepts but not your data.*
 
@@ -48,9 +47,9 @@ students_data <- read.csv(file_path)
 head(students_data$Exam_Score)
 ```
 
--   Describe any data preparation performed on the original data before modeling.
--   Include descriptions of all relevant variables.
--   Explain any transformations or cleaning steps.
+- Describe any data preparation performed on the original data before modeling.
+- Include descriptions of all relevant variables.
+- Explain any transformations or cleaning steps.
 
 ```{r}
 # Remove empty observations
@@ -117,13 +116,13 @@ length(students_data$Exam_Score)
 
 ### Modeling Process
 
--   **Methodology**: Detail the methods you applied (e.g., multiple linear regression, dummy variables, interaction terms).
--   **Decision-Making Process**:
-    -   Narrate your step-by-step decision-making as you adjusted the model.
-    -   Discuss how you attempted to validate model assumptions.
--   **Diagnostics**:
-    -   Include residual and outlier diagnostics.
-    -   Discuss any transformations or model selections made.
+- **Methodology**: Detail the methods you applied (e.g., multiple linear regression, dummy variables, interaction terms).
+- **Decision-Making Process**:
+  - Narrate your step-by-step decision-making as you adjusted the model.
+  - Discuss how you attempted to validate model assumptions.
+- **Diagnostics**:
+  - Include residual and outlier diagnostics.
+  - Discuss any transformations or model selections made.
 
 *Your task is to use appropriate methods to find a good model that can correctly answer a question about the dataset, and then communicate your result effectively.*
 
@@ -142,7 +141,6 @@ faraway::vif(initial_model)
 # Check R^2
 summary(initial_model)$r.squared
 ```
-
 From the output, we can see that the variance inflation factor of all the predictors are lower than 5, so we may not worry about collinearity.
 
 ```{r warning=FALSE}
@@ -155,7 +153,6 @@ selected_model
 # Check collinearity
 faraway::vif(initial_model)
 ```
-
 From the output of vif, we can see that we do not need to worry about collinearity for the selected model. Then, we want to check the model assumptions.
 
 ```{r}
@@ -212,7 +209,6 @@ assumptions_plots(fix_model)
 # Do a Breusch-Pagan Test
 bptest(fix_model)
 ```
-
 The Normal Q-Q plot is much better and clearly shows that the majority of the points closely follow a straight line, indicating that the normal distribution assumption is correct. The Fitted Versus Residual Plot may look like that mean of the residuals is approximately 0 and the spread of the residuals is roughly the same at most fitted values. However, the Breusch-Pagan test gives a pretty low p-value: `r bptest(fix_model)$p.value`, which implies that the constant variance assumption is not valid for the model after adjustments. Therefore, we need to do some transformations.
 
 ```{r}
@@ -231,12 +227,14 @@ assumptions_plots(trans_model)
 
 After the transformation, we find that the p-value of the Breusch-Pagan test is `r format_decimal(bptest(trans_model)$p.value, 4)`, which means that the test rejects the null hypothesis of constant variance for a low $\alpha$ ($p \le 0.05$), indicating that the constant variance assumption is not valid. However, from the Fitted Versus Residual Plot, we can see that the mean of the residuals is approximately 0 and the spread of the residuals is roughly the same at most fitted values, which indicates that we are close to meeting the assumption of constant variance. Moreover, the Normal Q-Q plot looks really good as the majority of the points closely follow a straight line, indicating that the normal distribution assumption is almost correct. Therefore, while this transformed model shows promising results and we are on the right track, further transformations, such as using Box-Cox, will be performed to address the remaining issues.
 
+
 ```{r}
 library(MASS)
 boxcox(trans_model, lambda = seq(0.2, 0.9, 0.01))
 ```
 
 The **Box-Cox plot** demonstrates that a response transformation could significantly enhance the model's fit. The estimated value of $\lambda$ is approximately **0.6**, which falls within the 95% confidence interval of $0.3$ to $0.8$. After evaluating several values within this interval, $\lambda = 0.6$ was selected because it yielded the largest Breusch-Pagan test p-value, indicating the best stabilization of variance. This transformation is expected to address heteroscedasticity and improve adherence to the model's assumptions.
+
 
 ```{r}
 # Add Box-Cox transformation to Response
@@ -254,16 +252,18 @@ assumptions_plots(trans_model_cox)
 
 After applying the Box-Cox transformation with $\lambda = 0.6$, the Breusch-Pagan test yielded a p-value of `r format_decimal(bptest(trans_model_cox)$p.value, 4)`, indicating that the test fails to reject the null hypothesis of constant variance. This confirms that the constant variance assumption is now valid. The **Fitted Versus Residual Plot** shows that the residuals have a mean approximately equal to 0, with a consistent spread across the fitted values, supporting the linearity and constant variance assumptions. Additionally, the **Normal Q-Q plot** demonstrates that the residuals closely follow the diagonal line, confirming that the normality assumption is satisfied. These results validate the final model with the Box-Cox transformation, making it suitable for interpretation and inference.
 
+
 ## Results
 
--   Present numerical and graphical summaries of your results.
--   Report the final model you have chosen.
--   Provide evidence that your final choice of model is a good one.
--   Include relevant tables, charts, or figures, and discuss them in the text.
+- Present numerical and graphical summaries of your results.
+- Report the final model you have chosen.
+- Provide evidence that your final choice of model is a good one.
+- Include relevant tables, charts, or figures, and discuss them in the text.
 
 ### Final Model
 
-The final model selected for predicting exam scores incorporates key predictors, including transformed terms for Hours_Studied, Attendance, Previous_Scores, and Physical_Activity, as well as categorical variables like Parental_Involvement and Parental_Education_Level. The model equation is as follows: $$
+The final model selected for predicting exam scores incorporates key predictors, including transformed terms for Hours_Studied, Attendance, Previous_Scores, and Physical_Activity, as well as categorical variables like Parental_Involvement and Parental_Education_Level. The model equation is as follows:
+$$
 \begin{aligned}
 \frac{\text{Exam_Score}^{0.6} - 1}{0.6} = & \ \beta_0 + \beta_1 \cdot \text{Hours_Studied} + \beta_2 \cdot \text{Hours_Studied}^2 + \beta_3 \cdot \log(\text{Attendance}) \\
 & + \beta_4 \cdot \text{Parental_Involvement}_{\text{Low}} + \beta_5 \cdot \text{Parental_Involvement}_{\text{Medium}} + \beta_6 \cdot \text{Extracurricular_Activities} \\
@@ -348,65 +348,24 @@ To address potential issues with influential data points, rows with Cook's Dista
 
 ## Discussion
 
-#### **1. Results in the Context of the Data**
-
--   **Key Predictors Identified**:
-    -   Hours studied, attendance, and parental involvement were identified as key predictors through a systematic analysis process:
-        -   We started with a multiple linear regression model that included all potential predictors from the dataset.
-        -   Using statistical techniques like backward elimination (based on AIC), we narrowed the model to the most impactful predictors that significantly contributed to explaining the variability in exam scores.
-        -   `Hours_Studied` emerged as a key predictor because it showed a strong and statistically significant linear relationship with exam scores ($p < `r summary(trans_model_cox)$coefficients["Hours_Studied", "Pr(>|t|)"]`$). Testing for quadratic effects (e.g., $\text{Hours_Studied}^2$) confirmed that the relationship was sufficiently captured in its linear form.
-        -   `Attendance` was identified as a strong predictor after applying a logarithmic transformation to address diminishing returns at higher attendance levels. Its statistical significance ($p = `r summary(trans_model_cox)$coefficients["log(Attendance)", "Pr(>|t|)"]`$) highlighted its consistent impact.
-        -   `Parental_Involvement` was found to have a significant categorical impact, with "low" and "medium" involvement levels leading to much lower scores compared to "high" involvement.
--   **Influence of Categorical Variables**:
-    -   Variables like `Parental Education Level` and `Extracurricular Activities` also significantly impacted performance.
-    -   Students with parents holding postgraduate degrees scored, on average, $`r summary(trans_model_cox)$coefficients["Parental_Education_LevelPostgraduate", "Estimate"]`$ higher on the transformed exam score compared to those whose parents had only a high school education. This value was dynamically extracted from the regression model's coefficient for`Parental_Education_LevelPostgraduate\`, representing the estimated effect of having parents with postgraduate education relative to the reference group.
-    -   Participation in extracurricular activities positively influenced scores ($p = `r summary(trans_model_cox)$coefficients["Extracurricular_ActivitiesYes", "Pr(>|t|)"]`$), likely due to improved time management and social engagement skills.
--   **Statistical Refinements**:
-    -   Our initial models faced challenges with residual normality and variance homogeneity. For example, the Breusch-Pagan test indicated heteroscedasticity.
-    -   Box-Cox transformation ($\lambda = 0.6$) successfully addressed these issues, resulting in a final model that adheres to statistical assumptions and offers reliable predictions.
-
-#### **2. Transforming Data into Action**
-
--   **Predictive Accuracy**:
-    -   With an adjusted $R^2$ of $`r format_decimal(adjusted_r2, 4)`$, the model explains a substantial portion of the variability in exam scores, confirming its robustness.
-    -   The RMSE of $r$ and LOOCV RMSE show alignment, indicating the model's capacity to generalize to new data.
--   **Actionable Insights**:
-    -   **Teachers and Administrators**:
-        -   Policies to improve attendance, such as incentives for perfect attendance or flexible scheduling for at-risk students, could significantly improve outcomes.
-        -   Promoting parental engagement through workshops or regular communication with parents can address the stark performance gap associated with low parental involvement ($`r format_decimal(summary(trans_model_cox)$coefficients["Parental_InvolvementLow", "Estimate"], 4)`$ compared to high involvement).
-    -   **Students**:
-        -   Reinforcing consistent study schedules and encouraging participation in structured extracurricular activities can lead to tangible improvements in performance.
--   In practice, our model could serve as the backbone for an educational dashboard, offering real-time insights to educators and administrators. Such a system could flag students with low attendance or insufficient study hours for early intervention while providing tailored recommendations, like increasing study hours or engaging in extracurricular activities, to enhance their academic outcomes.
-
-#### **3. Reflecting on the Implications of Our Findings**
-
--   **Educational Equity**:
-    -   The stark differences in performance based on parental education levels and access to resources underscore the need to address **socioeconomic disparities**.
-    -   Scholarships, free tutoring programs, or community mentoring initiatives could help students from lower-income families compete on equal footing.
--   **Policy Design**:
-    -   Focusing on teacher quality is crucial, as it indirectly impacts **student motivation** and **attendance**, which are key performance predictors.
-    -   Schools should invest in resource availability, such as digital tools or extracurricular support, to enhance learning opportunities.
--   **Future Research**:
-    -   Exploring interactions between predictors like peer influence and school type could deepen understanding.
-    -   For instance, investigating how peer dynamics vary between public and private schools may reveal actionable insights about optimal learning environments.
--   **Limitations to Acknowledge**:
-    -   The dataset predominantly focuses on quantifiable factors like hours studied, attendance, and test scores. While valuable, these only capture part of the story. 
-    -   Adding qualitative measures such as student feedback or emotional well-being assessments could enrich the model.
-    -   The removal of outliers based on Cook’s Distance may have slightly limited the dataset’s representativeness, though it improved statistical validity.
+- Discuss your results in the context of the data.
+- Explain how your final model is useful.
+- Reflect on the implications of your findings.
 
 ## Appendix
 
 Include supplementary materials that support your report but are not essential to the main text.
 
--   Additional code and analysis that would clutter the main report.
--   Extra figures or tables not included in the Results section.
--   Any other relevant information.
+- Additional code and analysis that would clutter the main report.
+- Extra figures or tables not included in the Results section.
+- Any other relevant information.
 
 *Do not simply dump code here; only include supplementary material.*
 
 ### Group Members
 
--   Anshul Kaushik
--   Desmond Fung
--   Jon Green
--   Kangyi Jiang
+- Anshul Kaushik
+- Desmond Fung
+- Jon Green
+- Kangyi Jiang
+
