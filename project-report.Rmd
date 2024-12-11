@@ -294,14 +294,17 @@ $$
 ### Model Performance
 
 ```{r}
+# RMSE
+rmse = sqrt(mean(resid(trans_model_cox)^2))
+cat("Root Mean Squared Error (RMSE):", rmse, "\n")
+
 # LOOCV RMSE
 loocv_rmse = calc_loocv_rmse(trans_model_cox)
+cat("Leave-One-Out Cross-Validation RMSE (LOOCV RMSE):", loocv_rmse, "\n")
 
 # Extract adjusted R^2 from model summary
 adjusted_r2 = summary(trans_model_cox)$adj.r.squared
-
-# RMSE
-rmse = sqrt(mean(resid(trans_model_cox)^2))
+cat("Adjusted R^2:", adjusted_r2, "\n")
 ```
 
 The final model demonstrates strong predictive capability with an adjusted $R^2$ of `r format_decimal(adjusted_r2, 4)`, indicating that it explains the majority of the variability in the exam scores. Additionally, the Root Mean Squared Error (RMSE) of the model is `r format_decimal(rmse, 4)`, and the Leave-One-Out Cross-Validation RMSE (LOOCV RMSE) is `r format_decimal(loocv_rmse, 4)`. The similarity between the RMSE and LOOCV RMSE models confirms that the model generalizes well to unseen data, making it suitable for prediction tasks.
@@ -346,6 +349,7 @@ The **Residuals vs Fitted plot** indicates that the residuals are evenly distrib
 # Perform the Breusch-Pagan test
 library(lmtest)
 bp_test = bptest(trans_model_cox)
+bp_test
 ```
 
 The **Breusch-Pagan Test** was conducted to statistically assess heteroscedasticity. The test yielded a p-value of `r format_decimal(bp_test$p.value, 5)`, which suggests that the residuals do exhibit constant variance. This aligns with the visual inspection of the residuals vs. fitted plot, further validating the reliability of the model.
