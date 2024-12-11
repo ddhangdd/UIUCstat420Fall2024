@@ -11,7 +11,7 @@
 
 <meta name="author" content="Alliance of the Unshabby" />
 
-<meta name="date" content="2024-11-16" />
+<meta name="date" content="2024-12-10" />
 
 <title>STAT 420 Fall 2024 Project Proposal</title>
 
@@ -352,7 +352,7 @@ display: none;
 
 <h1 class="title toc-ignore">STAT 420 Fall 2024 Project Proposal</h1>
 <h4 class="author">Alliance of the Unshabby</h4>
-<h4 class="date">2024-11-16</h4>
+<h4 class="date">2024-12-10</h4>
 
 </div>
 
@@ -366,98 +366,91 @@ display: none;
 <li>Kangyi Jiang</li>
 </ul>
 </div>
-<div id="tentative-project-title" class="section level2">
-<h2>2. Tentative Project Title</h2>
-<div id="influences-of-medical-data-on-blood-glucose-level" class="section level3">
-<h3>Influences of medical data on blood glucose level</h3>
+<div id="tentative-title" class="section level2">
+<h2>2. Tentative Title</h2>
+<div id="influences-of-student-data-on-final-exam-scores" class="section level3">
+<h3>Influences of student data on final exam scores</h3>
 </div>
 </div>
 <div id="dataset-description" class="section level2">
 <h2>3. Dataset Description</h2>
-<p>We chose a dataset that includes patients’ medical and demographic
-information, as well as their diabetes status (positive or negative).
-The dataset is huge, with 9 variables and 100,000 observations. The data
-includes variables such as age, gender, body mass index (BMI),
-hypertension, heart disease, smoking history, HbA1c level, and blood
-glucose level.</p>
-<p>The description of variables:</p>
-<ol style="list-style-type: decimal">
-<li><p>gender: Gender refers to a person’s biological sex, which may
-influence their vulnerability to diabetes.</p></li>
-<li><p>age: Age is an important factor as diabetes is more commonly
-diagnosed in older adults. Age ranges from 0-80 in the dataset.</p></li>
-<li><p>hypertension: Hypertension is a medical condition in which blood
-pressure in the arteries is consistently high. It has two possible
-values: 0 and 1, with 0 indicating that they do not have hypertension
-and 1 indicating that they have.</p></li>
-<li><p>heart_disease: Heart disease is another medical condition linked
-to an increased chance of acquiring diabetes. It has a value of either 0
-or 1, with 0 denoting no heart disease and 1 indicating heart
-disease.</p></li>
-<li><p>smoking_history: Smoking history is also considered a risk factor
-for diabetes and can exacerbate the complications associated with
-diabetes. There are 5 categories in the dataset i.e not
-current,former,No Info,current,never and ever.</p></li>
-<li><p>bmi: BMI (Body Mass Index) is a calculation of body fat based on
-weight and height. Increased BMI values are associated with an increased
-risk of diabetes. The dataset includes BMI values ranging from 10.16 to
-71.55. Underweight is defined as a BMI of less than 18.5, normal as
-18.5-24.9, overweight as 25-29.9, and obese as 30 or higher.</p></li>
-<li><p>HbA1c_level: HbA1c (Hemoglobin A1c) is a measurement of a
-person’s average blood sugar level over the previous 2-3 months. Higher
-levels imply an increased risk of getting diabetes. Diabetes is
-typically diagnosed when HbA1c levels exceed 6.5%.</p></li>
-<li><p>blood_glucose_level: Blood glucose level is the amount of glucose
-in the bloodstream at any particular time. High blood glucose levels are
-a key sign of diabetes.</p></li>
-<li><p>diabetes: Diabetes is a predicted variable in the dataset, with 1
-indicating the occurrence of diabetes and 0 indicating its
-absence.</p></li>
-</ol>
+<p>We have selected a dataset that provides various factors potentially
+influencing students’ final exam performance. This dataset includes
+demographic information, academic habits, environmental influences, and
+family background details for each student. The data is substantial,
+with around 20 variables and several hundred records (precise counts to
+be confirmed upon final loading). Key variables of interest include:</p>
+<ul>
+<li><strong>Exam_Score:</strong> The response variable measuring final
+exam performance.</li>
+<li><strong>Hours_Studied:</strong> Numeric measure of the average daily
+hours spent studying.</li>
+<li><strong>Attendance:</strong> Numeric measure indicating the number
+of lectures or classes attended.</li>
+<li><strong>Parental_Involvement:</strong> Categorical factor (High,
+Medium, Low) reflecting the level of parental support.</li>
+<li><strong>Access_to_Resources:</strong> Categorical factor indicating
+the availability of learning materials (High, Medium, Low).</li>
+<li><strong>Extracurricular_Activities:</strong> Categorical factor
+(Yes/No) representing participation in non-academic school
+activities.</li>
+<li><strong>Previous_Scores:</strong> Numeric measure of prior academic
+performance.</li>
+<li><strong>Motivation_Level:</strong> Categorical factor (High, Medium,
+Low) reflecting the student’s self-reported drive.</li>
+<li><strong>Parental_Education_Level:</strong> Categorical factor
+indicating the highest education level achieved by the parents
+(High_School, Undergraduate, Postgraduate).</li>
+<li><strong>Distance_from_Home:</strong> Categorical factor (Close,
+Moderate, Far) measuring proximity between home and school.</li>
+</ul>
+<p>These are only some of the variables from a rich dataset designed for
+educational analytics. We will focus primarily on understanding how
+select predictors—such as study habits, parental involvement, and
+resource availability—affect final exam scores.</p>
 </div>
 <div id="background-information" class="section level2">
 <h2>4. Background Information</h2>
-<p>The Diabetes Prediction Dataset is publicly available on Kaggle,
-contributed by iammustafatz (<a href="https://www.kaggle.com/datasets/iammustafatz/diabetes-prediction-dataset">Kaggle
-Source</a>). It contains medical and demographic data, including
-features like age, gender, BMI, blood glucose levels, HbA1c levels, and
-smoking history, which are crucial for predicting diabetes risk.</p>
-<p>The dataset is primarily sourced from Electronic Health Records
-(EHRs) aggregated from multiple healthcare providers. EHRs provide
-comprehensive patient data, enabling the identification of patterns and
-trends in health status. Data was collected via surveys, medical
-records, and laboratory tests, then cleaned and processed for
-consistency and quality.</p>
-<p>Due to confidentiality restrictions, specific details about the
-data’s origins cannot be disclosed. However, this dataset has been
-widely used in research and serves as a valuable resource for building
-predictive models and exploring diabetes-related insights.</p>
+<p>The dataset we have chosen is the “Student Performance Factors”
+dataset, which is publicly available on Kaggle. It is a synthetic
+dataset created to simulate realistic student performance scenarios,
+making it ideal for exploratory analysis and modeling approaches in an
+academic context.</p>
+<p><strong>Data Source:</strong> <a href="https://www.kaggle.com/datasets/lainguyn123/student-performance-factors">Student
+Performance Factors on Kaggle</a></p>
+<p>This dataset aggregates hypothetical student records that include a
+combination of academic, personal, and environmental factors. Although
+the data is not sourced from real-world institutions, it has been
+designed to provide plausible distributions and relationships. The use
+of this synthetic dataset allows for free exploration without
+confidentiality concerns and serves as an excellent resource for
+examining what might influence exam outcomes.</p>
 </div>
 <div id="statement-of-interest" class="section level2">
 <h2>5. Statement of Interest</h2>
-<p>We’re exploring the <strong>Diabetes Prediction Dataset</strong> to
-better understand what factors influence <strong>blood glucose
-levels</strong>.</p>
-<p>By focusing on key variables like <code>age</code>, <code>BMI</code>,
-<code>hypertension</code>, <code>heart_disease</code>,
-<code>smoking_history</code>, and <code>HbA1c_level</code>, we’ll use
-linear regression to analyze how these factors contribute to predicting
-blood glucose levels.</p>
-<p>Our goal is simple: uncover patterns that can help identify early
-warning signs for diabetes-related issues. This kind of insight could
-make a real difference in creating <strong>personalized care
-strategies</strong> and improving how we approach <strong>diabetes
-prevention and management</strong>.</p>
+<p>Our goal is to explore how various factors—ranging from hours studied
+and parental involvement to resource accessibility and extracurricular
+engagement—contribute to predicting final exam scores. By modeling these
+relationships, we hope to better understand which factors hold the
+strongest association with academic success. This insight can guide
+targeted interventions, help educators and policymakers prioritize
+resources, and offer students evidence-based strategies to improve their
+learning experience. Ultimately, we aim to produce a model that can shed
+light on key predictors of student performance and facilitate more
+informed decisions in educational settings.</p>
 </div>
-<div id="evidence-of-data-loading-in-r" class="section level2">
-<h2>6. Evidence of Data Loading in R</h2>
-<pre class="r"><code>file_path &lt;- &quot;diabetes_prediction_dataset.csv&quot;
+<div id="evidence-of-data-loading-into-r" class="section level2">
+<h2>6. Evidence of Data Loading into R</h2>
+<p>Below is a short snippet of R code to load and quickly inspect the
+data. We will use this code to confirm that we can read the dataset and
+access the <code>Exam_Score</code> variable.</p>
+<pre class="r"><code>file_path &lt;- &quot;StudentPerformanceFactors.csv&quot;
 
-diabetes_data &lt;- read.csv(file_path)
+students_data &lt;- read.csv(file_path)
 
-head(diabetes_data$blood_glucose_level)</code></pre>
-<pre><code>## [1] 140  80 158 155 155  85</code></pre>
-<p>This code should output: “[1] 140 80 158 155 155 85”.</p>
+head(students_data$Exam_Score)</code></pre>
+<pre><code>## [1] 67 61 74 71 70 71</code></pre>
+<p>This code should output: “[1] 67 61 74 71 70 71”.</p>
 </div>
 
 
