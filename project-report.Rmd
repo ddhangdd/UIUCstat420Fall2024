@@ -3,7 +3,7 @@ output:
   html_document: default
   pdf_document: default
 ---
- ---
+---
 title: "Influences of student data on final exam scores"
 author: "Alliance of the Unshabby"
 date: "`r Sys.Date()`"
@@ -14,24 +14,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r message=FALSE, warning=FALSE}
-# Utility Functions used in this Report
-format_decimal = function(x, k) trimws(format(round(x, k), nsmall=k))
-```
-
 ## Introduction
-
-Provide an introduction that includes:
-
-- **Purpose of the Analysis**: Explain what you are attempting to accomplish.
-- **Background Information**:
-  - What is this data?
-  - Where did it come from?
-  - What are the variables?
-  - Why is it interesting to you?
-- **Objective of the Model**: Describe why you are creating a model for this data and the goal of the model.
-
-*Note: Provide enough background so that a reader would not need to load your data to understand your report. Assume the reader is familiar with the course concepts but not your data.*
 
 Our main purpose with this dataset is to be able to predict student performance via exam scores from the values of the other variables in the dataset. We want to be able to see what key factors in a student's life, both at school and at home, can be correlated to higher or lower exam scores. We have some theories as to what specific factors we think will have a certain effect on scores, and we want to test those by creating models and generating plots and summaries that can showcase whether we should accept or reject the null hypothesis.
 
@@ -51,9 +34,12 @@ We used tests like the Breusch-Pagan test and created plots, such as fitted vs r
 
 We also ensured that any model we used was suitable for making assumptions based on its results. We used RMSE and LOOCV RMSE tests to verify that the model was not only appropriate for its given data but also capable of handling additional data and providing accurate results. Testing for outliers was also crucial. While their presence in a dataset is not inherently bad, we identified and analyzed them to adjust our model accordingly.
 
-## Methods
+```{r message=FALSE, warning=FALSE}
+# Utility Functions used in this Report
+format_decimal = function(x, k) trimws(format(round(x, k), nsmall=k))
+```
 
-This section contains the bulk of your work and R code. Use RMarkdown and code comments to explain your code if needed.
+## Methods
 
 ### Data Preparation
 
@@ -64,10 +50,6 @@ students_data <- read.csv(file_path)
 
 head(students_data$Exam_Score)
 ```
-
-- Describe any data preparation performed on the original data before modeling.
-- Include descriptions of all relevant variables.
-- Explain any transformations or cleaning steps.
 
 ```{r}
 # Remove empty observations
@@ -133,16 +115,6 @@ length(students_data$Exam_Score)
 ```
 
 ### Modeling Process
-
-- **Methodology**: Detail the methods you applied (e.g., multiple linear regression, dummy variables, interaction terms).
-- **Decision-Making Process**:
-  - Narrate your step-by-step decision-making as you adjusted the model.
-  - Discuss how you attempted to validate model assumptions.
-- **Diagnostics**:
-  - Include residual and outlier diagnostics.
-  - Discuss any transformations or model selections made.
-
-*Your task is to use appropriate methods to find a good model that can correctly answer a question about the dataset, and then communicate your result effectively.*
 
 We will use 10 of the predictors in the dataset to build a model. By adjusting the initial model, we will try to get a good model that can accurately predict the student's `Exam_Score` from the data of `Hours_Studied`, `Attendance`, `Parental_Involvement`, `Extracurricular_Activities`, `Sleep_Hours`, `Previous_Scores`, `Tutoring_Sessions`, `Physical_Activity`, `Parental_Education_Level`, and `Gender`.
 
@@ -272,11 +244,6 @@ After applying the Box-Cox transformation with $\lambda = 0.6$, the Breusch-Paga
 
 
 ## Results
-
-- Present numerical and graphical summaries of your results.
-- Report the final model you have chosen.
-- Provide evidence that your final choice of model is a good one.
-- Include relevant tables, charts, or figures, and discuss them in the text.
 
 ### Final Model
 
@@ -428,18 +395,9 @@ To address potential issues with influential data points, rows with Cook's Dista
 
 ## Appendix
 
-Include supplementary materials that support your report but are not essential to the main text.
-
-- Additional code and analysis that would clutter the main report.
-- Extra figures or tables not included in the Results section.
-- Any other relevant information.
-
-*Do not simply dump code here; only include supplementary material.*
-
 ### Group Members
 
 - Anshul Kaushik
 - Desmond Fung
 - Jon Green
 - Kangyi Jiang
-
