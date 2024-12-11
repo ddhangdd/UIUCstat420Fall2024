@@ -369,7 +369,7 @@ To address potential issues with influential data points, rows with Cook's Dista
 #### **1. Results in the Context of the Data**
 - **Key Predictors Identified**:
   - Hours studied, attendance, and parental involvement were identified as key predictors through a systematic analysis process:
-    - We began with a multiple linear regression model that included all potential predictors from the dataset.
+    - We began with a multiple linear regression model that included 10 potential predictors from the dataset.
     - Using statistical techniques like backward elimination (based on AIC), we narrowed the model to the most impactful predictors that significantly contributed to explaining the variability in exam scores.
     - `Hours_Studied` emerged as a key predictor because it showed a strong and statistically significant linear relationship with exam scores (\( p < `r summary(trans_model_cox)$coefficients["Hours_Studied", "Pr(>|t|)"]` \)). Testing for quadratic effects (e.g., \( \text{Hours_Studied}^2 \)) confirmed that the relationship was sufficiently captured in its linear form.
     - `Attendance` was identified as a strong predictor after applying a logarithmic transformation to address diminishing returns at higher attendance levels. Its statistical significance (\( p = `r summary(trans_model_cox)$coefficients["log(Attendance)", "Pr(>|t|)"]` \)) highlighted its consistent impact.
