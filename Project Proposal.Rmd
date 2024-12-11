@@ -1,14 +1,13 @@
 ---
 title: "STAT 420 Fall 2024 Project Proposal"
 author: "Alliance of the Unshabby"
-date: "2024-11-16"
+date: "2024-12-10"
 output: html_document
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 options(scipen = 1, digits = 4, width = 80, fig.align = "center")
 ```
-
 
 ## 1. Group Members
 
@@ -17,60 +16,49 @@ options(scipen = 1, digits = 4, width = 80, fig.align = "center")
 - Jon Green
 - Kangyi Jiang
 
-## 2. Tentative Project Title
+## 2. Tentative Title
 
-### Influences of medical data on blood glucose level
+### Influences of student data on final exam scores
 
 ## 3. Dataset Description
 
-We chose a dataset that includes patients' medical and demographic information, as well as their diabetes status (positive or negative). The dataset is huge, with 9 variables and 100,000 observations. The data includes variables such as age, gender, body mass index (BMI), hypertension, heart disease, smoking history, HbA1c level, and blood glucose level.
+We have selected a dataset that provides various factors potentially influencing students’ final exam performance. This dataset includes demographic information, academic habits, environmental influences, and family background details for each student. The data is substantial, with around 20 variables and 6607 records. Key variables of interest include:
 
-The description of variables:
-
-1. gender: Gender refers to a person's biological sex, which may influence their vulnerability to diabetes.
-
-2. age: Age is an important factor as diabetes is more commonly diagnosed in older adults. Age ranges from 0-80 in the dataset.
-
-3. hypertension: Hypertension is a medical condition in which blood pressure in the arteries is consistently high. It has two possible values: 0 and 1, with 0 indicating that they do not have hypertension and 1 indicating that they have.
-
-4. heart_disease: Heart disease is another medical condition linked to an increased chance of acquiring diabetes. It has a value of either 0 or 1, with 0 denoting no heart disease and 1 indicating heart disease.
-
-5. smoking_history: Smoking history is also considered a risk factor for diabetes and can exacerbate the complications associated with diabetes. There are 5 categories in the dataset i.e not current,former,No Info,current,never and ever.
-
-6. bmi: BMI (Body Mass Index) is a calculation of body fat based on weight and height. Increased BMI values are associated with an increased risk of diabetes. The dataset includes BMI values ranging from 10.16 to 71.55. Underweight is defined as a BMI of less than 18.5, normal as 18.5-24.9, overweight as 25-29.9, and obese as 30 or higher.
-
-7. HbA1c_level: HbA1c (Hemoglobin A1c) is a measurement of a person's average blood sugar level over the previous 2-3 months. Higher levels imply an increased risk of getting diabetes. Diabetes is typically diagnosed when HbA1c levels exceed 6.5%.
-
-8. blood_glucose_level: Blood glucose level is the amount of glucose in the bloodstream at any particular time. High blood glucose levels are a key sign of diabetes.
-
-9. diabetes: Diabetes is a predicted variable in the dataset, with 1 indicating the occurrence of diabetes and 0 indicating its absence.
+- **Exam_Score:** The response variable measuring final exam performance.
+- **Hours_Studied:** Numeric measure of the average daily hours spent studying.
+- **Attendance:** Numeric measure indicating the number of lectures or classes attended.
+- **Parental_Involvement:** Categorical factor (High, Medium, Low) reflecting the level of parental support.
+- **Access_to_Resources:** Categorical factor indicating the availability of learning materials (High, Medium, Low).
+- **Extracurricular_Activities:** Categorical factor (Yes/No) representing participation in non-academic school activities.
+- **Previous_Scores:** Numeric measure of prior academic performance.
+- **Motivation_Level:** Categorical factor (High, Medium, Low) reflecting the student’s self-reported drive.
+- **Parental_Education_Level:** Categorical factor indicating the highest education level achieved by the parents (High_School, Undergraduate, Postgraduate).
+- **Distance_from_Home:** Categorical factor (Close, Moderate, Far) measuring proximity between home and school.
+  
+These are only some of the variables from a rich dataset designed for educational analytics. We will focus primarily on understanding how select predictors—such as study habits, parental involvement, and resource availability—affect final exam scores.
 
 ## 4. Background Information
 
-The Diabetes Prediction Dataset is publicly available on Kaggle, contributed by iammustafatz ([Kaggle Source](https://www.kaggle.com/datasets/iammustafatz/diabetes-prediction-dataset)). It contains medical and demographic data, including features like age, gender, BMI, blood glucose levels, HbA1c levels, and smoking history, which are crucial for predicting diabetes risk.
+The dataset we have chosen is the "Student Performance Factors" dataset, which is publicly available on Kaggle. It is a synthetic dataset created to simulate realistic student performance scenarios, making it ideal for exploratory analysis and modeling approaches in an academic context.
 
-The dataset is primarily sourced from Electronic Health Records (EHRs) aggregated from multiple healthcare providers. EHRs provide comprehensive patient data, enabling the identification of patterns and trends in health status. Data was collected via surveys, medical records, and laboratory tests, then cleaned and processed for consistency and quality.
+**Data Source:** [Student Performance Factors on Kaggle](https://www.kaggle.com/datasets/lainguyn123/student-performance-factors)
 
-Due to confidentiality restrictions, specific details about the data's origins cannot be disclosed. However, this dataset has been widely used in research and serves as a valuable resource for building predictive models and exploring diabetes-related insights.
+This dataset aggregates hypothetical student records that include a combination of academic, personal, and environmental factors. Although the data is not sourced from real-world institutions, it has been designed to provide plausible distributions and relationships. The use of this synthetic dataset allows for free exploration without confidentiality concerns and serves as an excellent resource for examining what might influence exam outcomes.
 
 ## 5. Statement of Interest
 
-We’re exploring the **Diabetes Prediction Dataset** to better understand what factors influence **blood glucose levels**. 
+Our goal is to explore how various factors—ranging from hours studied and parental involvement to resource accessibility and extracurricular engagement—contribute to predicting final exam scores. By modeling these relationships, we hope to better understand which factors hold the strongest association with academic success. This insight can guide targeted interventions, help educators and policymakers prioritize resources, and offer students evidence-based strategies to improve their learning experience. Ultimately, we aim to produce a model that can shed light on key predictors of student performance and facilitate more informed decisions in educational settings.
 
-By focusing on key variables like `age`, `BMI`, `hypertension`, `heart_disease`, `smoking_history`, and `HbA1c_level`, we’ll use linear regression to analyze how these factors contribute to predicting blood glucose levels.
+## 6. Evidence of Data Loading into R
 
-Our goal is simple: uncover patterns that can help identify early warning signs for diabetes-related issues. This kind of insight could make a real difference in creating **personalized care strategies** and improving how we approach **diabetes prevention and management**.
-
-
-## 6. Evidence of Data Loading in R
+Below is a short snippet of R code to load and quickly inspect the data. We will use this code to confirm that we can read the dataset and access the `Exam_Score` variable.
 
 ```{r}
-file_path <- "diabetes_prediction_dataset.csv"
+file_path <- "StudentPerformanceFactors.csv"
 
-diabetes_data <- read.csv(file_path)
+students_data <- read.csv(file_path)
 
-head(diabetes_data$blood_glucose_level)
+head(students_data$Exam_Score)
 ```
 
-This code should output: "[1] 140  80 158 155 155  85". 
-
+This code should output: "[1] 67 61 74 71 70 71". 
